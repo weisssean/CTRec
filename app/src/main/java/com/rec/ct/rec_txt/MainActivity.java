@@ -13,13 +13,19 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.telephony.SmsManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import android.widget.ArrayAdapter;
 import android.widget.TextView;
+
+import com.rec.ct.rec_txt.data.RectifierDataSource;
+
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements AddRectifier.AddRectifierListener {
 
@@ -37,11 +43,16 @@ public class MainActivity extends AppCompatActivity implements AddRectifier.AddR
      * The {@link ViewPager} that will host the section contents.
      */
     private ViewPager mViewPager;
+    private RectifierDataSource mDatasource;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mDatasource = new RectifierDataSource(this);
+        mDatasource.open();
+
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -72,6 +83,15 @@ public class MainActivity extends AppCompatActivity implements AddRectifier.AddR
             }
         });
 
+        String retval= "";
+        for (int num=1; num <=50; num++) {
+            retval +=num+"|";
+            if(num%10 == 0){
+                 System.out.println(retval);
+                retval = "";
+            }
+        }
+
     }
 
 
@@ -100,7 +120,25 @@ public class MainActivity extends AppCompatActivity implements AddRectifier.AddR
     @Override
     public void onSaveRec(Rectifier r) {
 
+        Rectifier rec = mDatasource.createRectifier(r);
+        //.add(comment);
+
     }
+
+
+    @Override
+    protected void onResume() {
+        mDatasource.open();
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        mDatasource.close();
+        super.onPause();
+    }
+
+
 
     /**
      * A placeholder fragment containing a simple view.
@@ -151,6 +189,7 @@ public class MainActivity extends AppCompatActivity implements AddRectifier.AddR
         public Fragment getItem(int position) {
             switch (position){
                 case 0:
+                    return RectifierListFragment.newInstance();
                 case 1:
                     return PlaceholderFragment.newInstance(position + 1);
                 case 2:

@@ -1,5 +1,9 @@
 package com.rec.ct.rec_txt;
 
+import android.content.ContentValues;
+
+import com.rec.ct.rec_txt.data.P2SDBHelper;
+
 import java.util.UUID;
 
 /**
@@ -20,6 +24,9 @@ public class Rectifier {
         phone_number= _phone_number;
     }
 
+    public void setId(String  id) {
+        this.uuid = id;
+    }
 
     public String getUUID() {
         return uuid;
@@ -39,4 +46,12 @@ public class Rectifier {
         name = _n;
     }
 
+    public static ContentValues toValues(Rectifier rectifier) {
+        ContentValues values = new ContentValues();
+
+        values.put(P2SDBHelper.COLUMN_UUID, rectifier.getUUID());
+        values.put(P2SDBHelper.COLUMN_NAME, rectifier.getName());
+        values.put(P2SDBHelper.COLUMN_PHONE, rectifier.getPhoneNumber());
+        return values;
+    }
 }
