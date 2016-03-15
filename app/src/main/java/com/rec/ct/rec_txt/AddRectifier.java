@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 
 
 /**
@@ -18,6 +19,25 @@ import android.view.ViewGroup;
 public class AddRectifier extends Fragment {
 
     private AddRectifierListener mListener;
+
+    private View.OnClickListener saveRecListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (validate())
+            {
+            Rectifier rec = new Rectifier(et_name.getText().toString(),et_phone_num.getText().toString());
+            if (mListener!=null)
+                mListener.onSaveRec(rec);
+            }
+        }
+    };
+
+    private boolean validate() {
+        return true;
+    }
+
+    private EditText et_name;
+    private EditText et_phone_num;
 
     public AddRectifier() {
         // Required empty public constructor
@@ -31,7 +51,11 @@ public class AddRectifier extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_add_rectifier, container, false);
+        View v=  inflater.inflate(R.layout.fragment_add_rectifier, container, false);
+        v.findViewById(R.id.btn_rec).setOnClickListener(saveRecListener);
+         et_name = (EditText) v.findViewById(R.id.et_name);
+        et_phone_num = (EditText) v.findViewById(R.id.et_phone_num);
+        return v;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -40,6 +64,7 @@ public class AddRectifier extends Fragment {
             mListener.onSaveRec(new Rectifier());
         }
     }
+
 
     @Override
     public void onAttach(Context context) {
