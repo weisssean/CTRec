@@ -1,6 +1,9 @@
 package com.rec.ct.rec_txt;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -13,6 +16,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.telephony.SmsManager;
+import android.telephony.SmsMessage;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -22,12 +26,13 @@ import android.view.ViewGroup;
 
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.rec.ct.rec_txt.data.RectifierDataSource;
 
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements AddRectifier.AddRectifierListener {
+public class MainActivity extends AppCompatActivity implements AddRectifier.AddRectifierListener, RectifierListFragment.RectifierListListener {
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -72,25 +77,19 @@ public class MainActivity extends AppCompatActivity implements AddRectifier.AddR
 
                 SmsManager smsManager = SmsManager.getDefault();
 
-                smsManager.sendTextMessage("0015086856467", null, "sms message", null, null);
+                smsManager.sendTextMessage("5086856467", null, "Are you getting this?", null, null);
+               // smsManager.sendTextMessage("4132370383", null, "Are you getting this?", null, null);
 
-                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("sms:" + "0015086856467"));
-                intent.putExtra("sms_body", "sms message2");
-                startActivity(intent);
+//                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("sms:" + "0015086856467"));
+//                intent.putExtra("sms_body", "sms message2");
+//                startActivity(intent);
 
                 Snackbar.make(view, "Sending SMS", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
         });
 
-        String retval= "";
-        for (int num=1; num <=50; num++) {
-            retval +=num+"|";
-            if(num%10 == 0){
-                 System.out.println(retval);
-                retval = "";
-            }
-        }
+
 
     }
 
@@ -109,9 +108,12 @@ public class MainActivity extends AppCompatActivity implements AddRectifier.AddR
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        switch (id){
+            case R.id.action_settings:
+                return true;
+            case R.id.action_add_rec:
+                mViewPager.setCurrentItem(2);
+                return true;
         }
 
         return super.onOptionsItemSelected(item);
@@ -138,6 +140,11 @@ public class MainActivity extends AppCompatActivity implements AddRectifier.AddR
         super.onPause();
     }
 
+    @Override
+    public void onSelectRec(Rectifier r) {
+        mViewPager.setCurrentItem(1);
+
+    }
 
 
     /**
@@ -220,6 +227,41 @@ public class MainActivity extends AppCompatActivity implements AddRectifier.AddR
                     return "SECTION 3";
             }
             return null;
+        }
+    }
+    public static class SmsListener extends BroadcastReceiver {
+
+        private SharedPreferences preferences;
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            // TODO Auto-generated method stub
+
+            if(intent.getAction().equals("android.provider.Telephony.SMS_RECEIVED")){
+                Bundle bundle = intent.getExtras();           //---get the SMS message passed in---
+                SmsMessage[] msgs = null;
+                String msg_from;
+                if (bundle != null){
+                    //---retrieve the SMS message received---
+                    try{
+                        Object[] pdus = (Object[]) bundle.get("pdus");
+                        msgs = new SmsMessage[pdus.length];
+                        for(int i=0; i<msgs.length; i++){
+                            msgs[i] = SmsMessage.createFromPdu((byte[]) pdus[i]);
+                            msg_from = msgs[i].getOriginatingAddress();
+                            String msgBody = msgs[i].getMessageBody();
+                            Log.d(MainActivity.class.getName(),msg_from);
+                            Log.d(MainActivity.class.getName(),msgBody);
+
+
+                            //Toast.makeText(getApplicationContext(),"got sms",Toast.LENGTH_LONG).show();
+                            //mDatasource.createRectifier(new Rectifier(msg_from,msgBody));
+                        }
+                    }catch(Exception e){
+                            Log.d("Exception caught",e.getMessage());
+                    }
+                }
+            }
         }
     }
 }

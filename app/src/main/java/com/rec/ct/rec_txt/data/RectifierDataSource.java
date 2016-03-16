@@ -17,11 +17,11 @@ import java.util.List;
  */
 public class RectifierDataSource {
 
-     private SQLiteDatabase database;
+    private SQLiteDatabase database;
     private P2SDBHelper dbHelper;
-    private String[] allColumns = { P2SDBHelper.COLUMN_ID,P2SDBHelper.COLUMN_UUID,
+    private String[] allColumns = {P2SDBHelper.COLUMN_ID, P2SDBHelper.COLUMN_UUID,
             P2SDBHelper.COLUMN_NAME,
-            P2SDBHelper.COLUMN_PHONE };
+            P2SDBHelper.COLUMN_PHONE};
 
     public RectifierDataSource(Context context) {
         dbHelper = new P2SDBHelper(context);
@@ -72,17 +72,27 @@ public class RectifierDataSource {
         return rectifiers;
     }
 
-    private Rectifier cursorToRectifier(Cursor cursor) {
+
+    public Cursor getAllRectifiersCursor() {
+
+        Cursor cursor = database.query(P2SDBHelper.TABLE_RECTIFIERS,
+                allColumns, null, null, null, null, null);
+        return cursor;
+    }
+
+    public Rectifier cursorToRectifier(Cursor cursor) {
         try {
 
-        Rectifier rectifier = new Rectifier();
-        rectifier.setId(cursor.getString(cursor.getColumnIndex(P2SDBHelper.COLUMN_UUID)));
-        rectifier.setName(cursor.getString(cursor.getColumnIndex(P2SDBHelper.COLUMN_NAME)));
-        rectifier.setPhoneNumber(cursor.getString(cursor.getColumnIndex(P2SDBHelper.COLUMN_PHONE)));
-        return rectifier;
-        }catch (Exception e){
-            Log.e(RectifierDataSource.class.getName(),"",e);
+            Rectifier rectifier = new Rectifier();
+            rectifier.setId(cursor.getString(cursor.getColumnIndex(P2SDBHelper.COLUMN_UUID)));
+            rectifier.setName(cursor.getString(cursor.getColumnIndexOrThrow(P2SDBHelper.COLUMN_NAME)));
+            rectifier.setPhoneNumber(cursor.getString(cursor.getColumnIndexOrThrow(P2SDBHelper.COLUMN_PHONE)));
+            Log.d("REC",rectifier.toString());
+            return rectifier;
+        } catch (Exception e) {
+            Log.e(RectifierDataSource.class.getName(), "", e);
         }
         return null;
     }
+
 }

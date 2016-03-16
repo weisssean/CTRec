@@ -1,5 +1,7 @@
 apply plugin: 'com.android.application'
 
+apply plugin: 'testfairy'
+
 android {
     compileSdkVersion 23
     buildToolsVersion "23.0.2"
@@ -16,6 +18,14 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+    }
+
+    testfairyConfig {
+        apiKey "96d79506d3a64ee162c03cf6681b18717d8be074"
+    }
+
+    lintOptions{
+        abortOnError false
     }
 }
 
