@@ -1,5 +1,6 @@
-package com.rec.ct.rec_txt;
+package com.rec.ct.rec_txt.fragments;
 
+ import android.app.ActionBar;
  import android.content.Context;
  import android.database.Cursor;
  import android.os.Bundle;
@@ -8,10 +9,11 @@ package com.rec.ct.rec_txt;
  import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
  import android.widget.ListView;
  import android.widget.TextView;
 
+ import com.rec.ct.rec_txt.R;
+ import com.rec.ct.rec_txt.Rectifier;
  import com.rec.ct.rec_txt.data.P2SDBHelper;
  import com.rec.ct.rec_txt.data.RectifierDataSource;
 
@@ -50,6 +52,10 @@ public class RectifierListFragment extends ListFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_rectifier_list, container, false);
+        ActionBar actionBar = getActivity().getActionBar();
+        if (actionBar!=null){
+            getActivity().getActionBar().setDisplayHomeAsUpEnabled(false);
+        }
 
 
         List<Rectifier> values = mDatasource.getAllRectifiers();
@@ -66,7 +72,7 @@ public class RectifierListFragment extends ListFragment {
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
-        mListener.onSelectRec( mDatasource.cursorToRectifier((Cursor) l.getItemAtPosition(position)));
+        mListener.onSelectRec(mDatasource.cursorToRectifier((Cursor) l.getItemAtPosition(position)));
     }
 
     @Override

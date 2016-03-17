@@ -1,5 +1,6 @@
 package com.rec.ct.rec_txt;
 
+import android.app.ActionBar;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
@@ -52,6 +53,13 @@ public class AddRectifier extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v=  inflater.inflate(R.layout.fragment_add_rectifier, container, false);
+
+        ActionBar actionBar = getActivity().getActionBar();
+        if (actionBar!=null){
+            getActivity().getActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+
+
         v.findViewById(R.id.btn_rec).setOnClickListener(saveRecListener);
          et_name = (EditText) v.findViewById(R.id.et_name);
         et_phone_num = (EditText) v.findViewById(R.id.et_phone_num);

@@ -1,10 +1,5 @@
 package com.rec.ct.rec_txt;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.net.Uri;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -16,37 +11,22 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.telephony.SmsManager;
-import android.telephony.SmsMessage;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import android.widget.ArrayAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.rec.ct.rec_txt.data.RectifierDataSource;
+import com.rec.ct.rec_txt.fragments.RectifierFragment;
+import com.rec.ct.rec_txt.fragments.RectifierListFragment;
+import com.rec.ct.rec_txt.fragments.dummy.DummyContent;
 
-import java.util.List;
+public class MainActivity extends AppCompatActivity implements AddRectifier.AddRectifierListener, RectifierListFragment.RectifierListListener,RectifierFragment.OnListFragmentInteractionListener {
 
-public class MainActivity extends AppCompatActivity implements AddRectifier.AddRectifierListener, RectifierListFragment.RectifierListListener {
-
-    /**
-     * The {@link android.support.v4.view.PagerAdapter} that will provide
-     * fragments for each of the sections. We use a
-     * {@link FragmentPagerAdapter} derivative, which will keep every
-     * loaded fragment in memory. If this becomes too memory intensive, it
-     * may be best to switch to a
-     * {@link android.support.v4.app.FragmentStatePagerAdapter}.
-     */
     private SectionsPagerAdapter mSectionsPagerAdapter;
-
-    /**
-     * The {@link ViewPager} that will host the section contents.
-     */
     private ViewPager mViewPager;
     private RectifierDataSource mDatasource;
 
@@ -54,6 +34,7 @@ public class MainActivity extends AppCompatActivity implements AddRectifier.AddR
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
 
         mDatasource = new RectifierDataSource(this);
         mDatasource.open();
@@ -146,6 +127,11 @@ public class MainActivity extends AppCompatActivity implements AddRectifier.AddR
 
     }
 
+    @Override
+    public void onListFragmentInteraction(DummyContent.DummyItem item) {
+
+    }
+
 
     /**
      * A placeholder fragment containing a simple view.
@@ -198,7 +184,7 @@ public class MainActivity extends AppCompatActivity implements AddRectifier.AddR
                 case 0:
                     return RectifierListFragment.newInstance();
                 case 1:
-                    return PlaceholderFragment.newInstance(position + 1);
+                    return RectifierFragment.newInstance(position + 1);
                 case 2:
                     return AddRectifier.newInstance();
                 default:
@@ -227,41 +213,6 @@ public class MainActivity extends AppCompatActivity implements AddRectifier.AddR
                     return "SECTION 3";
             }
             return null;
-        }
-    }
-    public static class SmsListener extends BroadcastReceiver {
-
-        private SharedPreferences preferences;
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            // TODO Auto-generated method stub
-
-            if(intent.getAction().equals("android.provider.Telephony.SMS_RECEIVED")){
-                Bundle bundle = intent.getExtras();           //---get the SMS message passed in---
-                SmsMessage[] msgs = null;
-                String msg_from;
-                if (bundle != null){
-                    //---retrieve the SMS message received---
-                    try{
-                        Object[] pdus = (Object[]) bundle.get("pdus");
-                        msgs = new SmsMessage[pdus.length];
-                        for(int i=0; i<msgs.length; i++){
-                            msgs[i] = SmsMessage.createFromPdu((byte[]) pdus[i]);
-                            msg_from = msgs[i].getOriginatingAddress();
-                            String msgBody = msgs[i].getMessageBody();
-                            Log.d(MainActivity.class.getName(),msg_from);
-                            Log.d(MainActivity.class.getName(),msgBody);
-
-
-                            //Toast.makeText(getApplicationContext(),"got sms",Toast.LENGTH_LONG).show();
-                            //mDatasource.createRectifier(new Rectifier(msg_from,msgBody));
-                        }
-                    }catch(Exception e){
-                            Log.d("Exception caught",e.getMessage());
-                    }
-                }
-            }
         }
     }
 }

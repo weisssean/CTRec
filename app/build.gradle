@@ -24,7 +24,7 @@ android {
         apiKey "96d79506d3a64ee162c03cf6681b18717d8be074"
     }
 
-    lintOptions{
+    lintOptions {
         abortOnError false
     }
 }
