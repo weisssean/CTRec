@@ -1,5 +1,6 @@
 package com.rec.ct.rec_txt;
 
+import android.app.ActionBar;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -11,6 +12,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.telephony.SmsManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -24,7 +26,7 @@ import com.rec.ct.rec_txt.fragments.RectifierFragment;
 import com.rec.ct.rec_txt.fragments.RectifierListFragment;
 import com.rec.ct.rec_txt.fragments.dummy.DummyContent;
 
-public class MainActivity extends AppCompatActivity implements AddRectifier.AddRectifierListener, RectifierListFragment.RectifierListListener,RectifierFragment.OnListFragmentInteractionListener {
+public class MainActivity extends AppCompatActivity implements AddRectifier.AddRectifierListener, RectifierListFragment.RectifierListListener, RectifierFragment.OnListFragmentInteractionListener {
 
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private ViewPager mViewPager;
@@ -35,13 +37,13 @@ public class MainActivity extends AppCompatActivity implements AddRectifier.AddR
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
         mDatasource = new RectifierDataSource(this);
         mDatasource.open();
 
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
@@ -49,6 +51,27 @@ public class MainActivity extends AppCompatActivity implements AddRectifier.AddR
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
+
+        mViewPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+
+            // optional
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+            }
+
+            // optional
+            @Override
+            public void onPageSelected(int position) {
+                if (position == 0) getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+                else getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+            }
+
+            // optional
+            @Override
+            public void onPageScrollStateChanged(int state) {
+            }
+        });
 
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -59,7 +82,7 @@ public class MainActivity extends AppCompatActivity implements AddRectifier.AddR
                 SmsManager smsManager = SmsManager.getDefault();
 
                 smsManager.sendTextMessage("5086856467", null, "Are you getting this?", null, null);
-               // smsManager.sendTextMessage("4132370383", null, "Are you getting this?", null, null);
+                // smsManager.sendTextMessage("4132370383", null, "Are you getting this?", null, null);
 
 //                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("sms:" + "0015086856467"));
 //                intent.putExtra("sms_body", "sms message2");
@@ -69,7 +92,6 @@ public class MainActivity extends AppCompatActivity implements AddRectifier.AddR
                         .setAction("Action", null).show();
             }
         });
-
 
 
     }
@@ -89,11 +111,14 @@ public class MainActivity extends AppCompatActivity implements AddRectifier.AddR
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        switch (id){
+        switch (id) {
             case R.id.action_settings:
                 return true;
             case R.id.action_add_rec:
                 mViewPager.setCurrentItem(2);
+                return true;
+            case android.R.id.home:
+                mViewPager.setCurrentItem(0);
                 return true;
         }
 
@@ -180,7 +205,7 @@ public class MainActivity extends AppCompatActivity implements AddRectifier.AddR
 
         @Override
         public Fragment getItem(int position) {
-            switch (position){
+            switch (position) {
                 case 0:
                     return RectifierListFragment.newInstance();
                 case 1:
